@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "pytest-select"
+version = "0.1.0"
+description = "A pytest plugin which allows to (de-)select tests from a file."
+authors = ["Ulrich Petri <ulo@ulo.pe>"]
+repository = "https://github.com/ulope/pytest-select"
+readme = "README.rst"
+license = "MIT"
+keywords = ["pytest", "test", "plugin"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Plugins",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+pytest = ">=3.0"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^18.3-alpha.0", allows-prereleases = true}
+coverage = "^4.0"
+flake8 = "^3.6"
+flake8-bugbear = "^18.8"
+
+[tool.poetry.plugins.pytest11]
+pytest-select = "pytest_select.plugin"
+
+[tool.black]
+line-length = 99
+py36 = true
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

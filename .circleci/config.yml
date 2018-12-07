@@ -1,0 +1,48 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
+          - v1-dependencies-{{ checksum "pyproject.toml" }}-
+          - v1-dependencies-
+
+      - run:
+          name: install deps
+          command: |
+            python3 -m pip install poetry
+            poetry install
+            poetry run python -m pip install codecov
+
+      - save_cache:
+          paths:
+            - /root/.cache/pypoetry/virtualenvs
+          key: v1-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
+
+      - run:
+          name: lint
+          command: |
+            poetry run flake8 pytest_select
+            poetry run black --check pytest_select tests
+
+      - run:
+          name: run tests
+          command: |
+            mkdir test-reports
+            poetry run coverage run --branch --source=pytest_select -m py.test --junit-xml=test-reports
+
+      - store_test_results:
+          path: test-reports
+
+      - store_artifacts:
+          path: test-reports
+
+      - run:
+          name: upload codecov results
+          command: poetry run codecov
