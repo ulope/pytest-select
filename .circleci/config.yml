@@ -35,7 +35,7 @@ jobs:
           name: run tests
           command: |
             mkdir test-reports
-            poetry run coverage run --branch --source=pytest_select -m py.test --junit-xml=test-reports
+            poetry run coverage run --branch --source=pytest_select -m py.test --junit-xml=test-reports/result.xml
 
       - store_test_results:
           path: test-reports
