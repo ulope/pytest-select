@@ -16,13 +16,13 @@ jobs:
       - run:
           name: install deps
           command: |
-            python3 -m pip install poetry
+            sudo python3 -m pip install poetry
             poetry install
             poetry run python -m pip install codecov
 
       - save_cache:
           paths:
-            - /root/.cache/pypoetry/virtualenvs
+            - /home/circleci/.cache/pypoetry/virtualenvs
           key: v1-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
 
       - run:
