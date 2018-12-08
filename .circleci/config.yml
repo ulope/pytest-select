@@ -17,9 +17,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
-          - v1-dependencies-{{ checksum "pyproject.toml" }}-
-          - v1-dependencies-
+          - v1-dependencies-<< parameters.py-version >>-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
+          - v1-dependencies-<< parameters.py-version >>-{{ checksum "pyproject.toml" }}-
+          - v1-dependencies-<< parameters.py-version >>-
 
       - run:
           name: install deps
@@ -32,7 +32,7 @@ jobs:
           paths:
             - /home/circleci/.cache/pypoetry/virtualenvs
             - /root/.cache/pip
-          key: v1-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
+          key: v1-dependencies-<< parameters.py-version >>-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
 
       - run:
           name: lint
