@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-select"
-version = "0.1.0"
+version = "v0.1.0post0"
 description = "A pytest plugin which allows to (de-)select tests from a file."
 authors = ["Ulrich Petri <ulo@ulo.pe>"]
 repository = "https://github.com/ulope/pytest-select"

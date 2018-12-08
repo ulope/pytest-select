@@ -67,7 +67,7 @@ Example::
 
     pytest --collect-only --quiet | \
         grep '::' | \
-        circleci tests split --split-by=timings > selected.txt
+        circleci tests split --split-by=timings --timings-type=testname > selected.txt
     pytest --select-from-file selected.txt
 
 .. _Circle CI: https://circleci.com
@@ -77,5 +77,7 @@ Example::
 Version History
 ---------------
 
+- ``v0.1.0post0`` - 2018-12-08:
+    Fix README
 - ``v0.1.0`` - 2018-12-08:
     Initial release
