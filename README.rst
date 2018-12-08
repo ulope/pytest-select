@@ -1,7 +1,7 @@
 pytest-select
 =============
 
-|PyPI pyversions| |PyPI license| |PyPI version| |CircleCI build|
+|PyPI pyversions| |PyPI license| |PyPI version| |CircleCI build| |Codecov result|
 
 .. |PyPI version| image:: https://img.shields.io/pypi/v/pytest-select.svg
    :target: https://pypi.org/project/pytest-select/
@@ -9,9 +9,9 @@ pytest-select
    :target: https://pypi.python.org/pypi/pytest-select/
 .. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/pytest-select.svg
    :target: https://pypi.python.org/pypi/pytest-select/
-.. |CircleCI build| image:: https://img.shields.io/circleci/project/github/ulope/pytest-select/master.svg
+.. |CircleCI build| image:: https://img.shields.io/circleci/project/github/ulope/pytest-select/master.svg?logo=circleci
    :target: https://circleci.com/gh/ulope/pytest-select/
-.. |Codecov result| image:: https://img.shields.io/codecov/c/github/ulope/pytest-select/master.svg
+.. |Codecov result| image:: https://img.shields.io/codecov/c/github/ulope/pytest-select/master.svg?logo=codecov
    :target: https://codecov.io/gh/ulope/pytest-select
 
 
@@ -25,8 +25,8 @@ Usage
 
 This plugin adds two comamnd line options to pytest:
 
-- `--select-from-file`
-- `--deselect-from-file`
+- ``--select-from-file``
+- ``--deselect-from-file``
 
 Both expect an argument that resolves to a UTF-8 encoded text file containing one test name per
 line.
