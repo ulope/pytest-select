@@ -23,6 +23,7 @@ jobs:
       - save_cache:
           paths:
             - /home/circleci/.cache/pypoetry/virtualenvs
+            - /root/.cache/pip
           key: v1-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
 
       - run:
