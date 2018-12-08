@@ -20,6 +20,14 @@ This is a `pytest`_ plugin which allows to (de-)select tests by name from a list
 .. _pytest: https://pytest.org
 
 
+Installation
+------------
+
+It's recommended to install this package from PyPI::
+
+    pip install pytest-select
+
+
 Usage
 -----
 
@@ -46,6 +54,17 @@ Example::
     $~ pytest --select-from-file selection.txt
     $~ pytest --deselect-from-file selection.txt
 
+
+Development
+-----------
+
+This package uses Poetry_.
+To setup a development environment install Poetry and then run::
+
+    poetry install
+
+
+.. _Poetry: https://poetry.eustace.io
 
 Questions
 ---------
