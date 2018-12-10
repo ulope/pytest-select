@@ -14,14 +14,15 @@ def pytest_addoption(parser):
         action="store",
         dest="selectfromfile",
         default=None,
-        help="Select tests given in file. One line per test name.",
+        help="Select tests given in file. One line per test name.",  # pragma: no mutate
     )
     parser.addoption(
         "--deselect-from-file",
         action="store",
         dest="deselectfromfile",
         default=None,
-        help="Deselect tests given in file. One line per test name.",
+        help="Deselect tests given in file. One line per test name.",  # pragma: no mutate
+    )
     parser.addoption(
         "--select-fail-on-missing",
         action="store_true",

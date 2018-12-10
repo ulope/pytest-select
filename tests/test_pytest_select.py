@@ -64,7 +64,12 @@ def test_missing_selection_file_fails(testdir, option_name):
             ["{testfile}::test_a[1-2]", "test_a[1-3]", "test_a[3-1]", "test_that_does_not_exist"],
             1,
             {"failed": 2},
-            [r"\s+- test_a\[3-1\]", r"\s+- test_that_does_not_exist"],
+            [
+                r".*Not all selected tests exist \(or have been deselected otherwise\).*",
+                r"\s+Missing selected test names:",
+                r"\s+- test_a\[3-1\]",
+                r"\s+- test_that_does_not_exist",
+            ],
         ),
         ("--deselect-from-file", ["test_a[1-1]", "test_a[1-4]"], 1, {"failed": 2}, []),
         (
@@ -79,7 +84,12 @@ def test_missing_selection_file_fails(testdir, option_name):
             ["{testfile}::test_a[1-2]", "test_a[1-3]", "test_a[3-1]", "test_that_does_not_exist"],
             0,
             {"passed": 2},
-            [r"\s+- test_a\[3-1\]", r"\s+- test_that_does_not_exist"],
+            [
+                r".*Not all deselected tests exist \(or have been selected otherwise\).*",
+                r"\s+Missing deselected test names:",
+                r"\s+- test_a\[3-1\]",
+                r"\s+- test_that_does_not_exist",
+            ],
         ),
     ),
 )

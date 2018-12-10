@@ -22,7 +22,7 @@ jobs:
           - v1-dependencies-<< parameters.py-version >>-
 
       - run:
-          name: install deps
+          name: Install Deps
           command: |
             sudo python3 -m pip install poetry
             poetry install
@@ -35,13 +35,13 @@ jobs:
           key: v1-dependencies-<< parameters.py-version >>-{{ checksum "pyproject.toml" }}-{{ checksum "poetry.lock" }}
 
       - run:
-          name: lint
+          name: Lint
           command: |
             poetry run flake8 pytest_select
             poetry run black --check pytest_select tests
 
       - run:
-          name: run tests
+          name: Run Rests
           command: |
             mkdir test-reports
             poetry run coverage run --branch --source=pytest_select -m py.test --junit-xml=test-reports/result.xml
@@ -51,6 +51,21 @@ jobs:
 
       - store_artifacts:
           path: test-reports
+
+      - restore_cache:
+          keys:
+          - v1-mutation-<< parameters.py-version >>
+
+      - run:
+          name: Run Mutation Tests
+          command: |
+            poetry run mutmut run --paths-to-mutate pytest_select --runner 'python -m pytest'
+            poetry run python tests/util/mutmut_get_failed.py
+
+      - save_cache:
+          paths:
+            - .mutmut-cache
+          key: v1-mutation-<< parameters.py-version >>
 
       - run:
           name: upload codecov results
