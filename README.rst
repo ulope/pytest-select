@@ -31,13 +31,18 @@ It's recommended to install this package from PyPI::
 Usage
 -----
 
-This plugin adds two comamnd line options to pytest:
+This plugin adds new command line options to pytest:
 
 - ``--select-from-file``
 - ``--deselect-from-file``
+- ``--select-fail-on-missing``
 
-Both expect an argument that resolves to a UTF-8 encoded text file containing one test name per
+The first two both expect an argument that resolves to a UTF-8 encoded text file containing one test name per
 line.
+
+The third one changes the behaviour in case (de-)selected test names are missing from the to-be executed tests.
+By default a warning is emitted and the remaining selected tests are executed as normal.
+By using the ``--select-fail-on-missing`` flag this behaviour can be changed to instead abort execution in that case.
 
 Test names are expected in the same format as seen in the output of
 ``pytest --collect-only --quiet`` for example.

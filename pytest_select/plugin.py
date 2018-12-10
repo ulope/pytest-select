@@ -22,6 +22,15 @@ def pytest_addoption(parser):
         dest="deselectfromfile",
         default=None,
         help="Deselect tests given in file. One line per test name.",
+    parser.addoption(
+        "--select-fail-on-missing",
+        action="store_true",
+        dest="selectfailonmissing",
+        default=False,
+        help=(
+            "Fail instead of warn when not all "  # pragma: no mutate
+            "(de-)selected tests could be found."  # pragma: no mutate
+        ),
     )
 
 
@@ -73,6 +82,8 @@ def pytest_collection_modifyitems(session, config, items):
                 f"Missing {'' if should_select else 'de'}selected test names:\n  - "
             )
             message += "\n  - ".join(missing_test_names)
+            if config.getoption("selectfailonmissing"):
+                raise UsageError(message)
             warnings.warn(message, PytestSelectWarning)
 
         # Slice assignment is required since `items` needs to be modified in place

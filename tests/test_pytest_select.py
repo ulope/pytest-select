@@ -1,6 +1,23 @@
 import pytest
 
 
+TEST_CONTENT = """
+    import pytest
+    
+    @pytest.mark.parametrize(
+        ('a', 'b'),
+        (
+            (1, 1),
+            (1, 2),
+            (1, 3),
+            (1, 4),
+        )
+    )
+    def test_a(a, b):
+        assert b in (1, 4)
+"""
+
+
 @pytest.mark.parametrize("option_name", ("--select-from-file", "--deselect-from-file"))
 def test_select_options_exist(testdir, option_name):
     selection_file_name = testdir.makefile(".txt", "test_a", "test_b")
@@ -69,24 +86,7 @@ def test_missing_selection_file_fails(testdir, option_name):
 def test_tests_are_selected(
     testdir, select_option, exit_code, select_content, outcomes, stdout_lines
 ):
-    testfile = testdir.makefile(
-        ".py",
-        """
-            import pytest
-            
-            @pytest.mark.parametrize(
-                ('a', 'b'),
-                (
-                    (1, 1),
-                    (1, 2),
-                    (1, 3),
-                    (1, 4),
-                )
-            )
-            def test_a(a, b):
-                assert b in (1, 4)
-        """,
-    )
+    testfile = testdir.makefile(".py", TEST_CONTENT)
     args = ["-v", "-Walways"]
     if select_option and select_content:
         select_file = testdir.makefile(
@@ -100,3 +100,26 @@ def test_tests_are_selected(
     result.assert_outcomes(**outcomes)
     if stdout_lines:
         result.stdout.re_match_lines_random(stdout_lines)
+
+
+@pytest.mark.parametrize("deselect", (False, True))
+def test_fail_on_missing(testdir, deselect):
+    testdir.makefile(".py", TEST_CONTENT)
+    selectfile = testdir.makefile(".txt", "test_a[1-1]", "test_a[2-1]")
+    result = testdir.runpytest(
+        "-v",
+        "--select-fail-on-missing",
+        f"--{'de' if deselect else ''}select-from-file",
+        selectfile,
+    )
+    assert result.ret == 4
+    result.stderr.re_match_lines(
+        [
+            (
+                fr"ERROR: pytest-select: Not all {'de' if deselect else ''}selected tests exist "
+                fr"\(or have been {'' if deselect else 'de'}selected otherwise\)."
+            ),
+            f"Missing {'de' if deselect else ''}selected test names:",
+            "  - test_a[2-1]",
+        ]
+    )
