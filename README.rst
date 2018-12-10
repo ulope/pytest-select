@@ -101,7 +101,10 @@ Example::
 Version History
 ---------------
 
+- ``v0.1.1`` - 2018-12-10:
+    - Add ``--select-fail-on-missing`` option
+    - Add basic mutation testing
 - ``v0.1.0post0`` - 2018-12-08:
-    Fix README
+    - Fix README
 - ``v0.1.0`` - 2018-12-08:
-    Initial release
+    - Initial release
