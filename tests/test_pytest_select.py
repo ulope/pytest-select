@@ -133,3 +133,21 @@ def test_fail_on_missing(testdir, deselect):
             "  - test_a[2-1]",
         ]
     )
+
+
+@pytest.mark.parametrize(
+    ("fail_on_missing", "deselect"), [(True, False), (True, True), (False, False), (False, True)]
+)
+def test_report_header(testdir, fail_on_missing, deselect):
+    testdir.makefile(".py", TEST_CONTENT)
+    selectfile = testdir.makefile(".txt", "test_a[1-1]")
+    args = ["-v", f"--{'de' if deselect else ''}select-from-file", selectfile]
+    if fail_on_missing:
+        args.append("--select-fail-on-missing")
+    result = testdir.runpytest(*args)
+
+    failing_suffix = ", failing on missing selection items" if fail_on_missing else ""
+    deselect_prefix = "de" if deselect else ""
+    result.stdout.re_match_lines(
+        [fr"select: {deselect_prefix}selecting tests from '{selectfile}'{failing_suffix}$"]
+    )

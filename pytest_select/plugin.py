@@ -1,6 +1,7 @@
 import warnings
 from pathlib import Path
 
+import pytest
 from pytest import PytestWarning, UsageError
 
 
@@ -9,21 +10,24 @@ class PytestSelectWarning(PytestWarning):
 
 
 def pytest_addoption(parser):
-    parser.addoption(
+    select_group = parser.getgroup(
+        "select", "Modify the list of collected tests."  # pragma: no mutate  # pragma: no mutate
+    )
+    select_group.addoption(
         "--select-from-file",
         action="store",
         dest="selectfromfile",
         default=None,
         help="Select tests given in file. One line per test name.",  # pragma: no mutate
     )
-    parser.addoption(
+    select_group.addoption(
         "--deselect-from-file",
         action="store",
         dest="deselectfromfile",
         default=None,
         help="Deselect tests given in file. One line per test name.",  # pragma: no mutate
     )
-    parser.addoption(
+    select_group.addoption(
         "--select-fail-on-missing",
         action="store_true",
         dest="selectfailonmissing",
@@ -35,15 +39,26 @@ def pytest_addoption(parser):
     )
 
 
+@pytest.hookimpl(trylast=True)  # pragma: no mutate
+def pytest_report_header(config):
+    _validate_option_values(config)
+
+    fail_on_missing = config.getoption("selectfailonmissing")
+
+    for option_name, selecting in [("selectfromfile", True), ("deselectfromfile", False)]:
+        option_value = config.getoption(option_name)
+        if option_value is not None:
+            return [
+                "select: {}selecting tests from '{}'{}".format(
+                    "de" if not selecting else "",
+                    option_value,
+                    ", failing on missing selection items" if fail_on_missing else "",
+                )
+            ]
+
+
 def pytest_collection_modifyitems(session, config, items):
-    is_option_conflict = (
-        config.getoption("selectfromfile") is not None
-        and config.getoption("deselectfromfile") is not None
-    )
-    if is_option_conflict:
-        raise UsageError(
-            "'--select-from-file' and '--deselect-from-file' can not be used together."
-        )
+    _validate_option_values(config)
 
     for option_name, should_select in [("selectfromfile", True), ("deselectfromfile", False)]:
         selection_file_name = config.getoption(option_name)
@@ -51,9 +66,6 @@ def pytest_collection_modifyitems(session, config, items):
             continue
 
         selection_file_path = Path(selection_file_name)
-        if not selection_file_path.exists():
-            raise UsageError(f"Given selection file '{selection_file_name}' doesn't exist.")
-
         with selection_file_path.open("rt", encoding="UTF-8") as selection_file:
             test_names = {test_name.strip() for test_name in selection_file}
 
@@ -90,3 +102,23 @@ def pytest_collection_modifyitems(session, config, items):
         # Slice assignment is required since `items` needs to be modified in place
         items[:] = selected_items
         config.hook.pytest_deselected(items=deselected_items)
+
+
+def _validate_option_values(config):
+    is_option_conflict = (
+        config.getoption("selectfromfile") is not None
+        and config.getoption("deselectfromfile") is not None
+    )
+    if is_option_conflict:
+        raise UsageError(
+            "'--select-from-file' and '--deselect-from-file' can not be used together."
+        )
+
+    for option_name in ["selectfromfile", "deselectfromfile"]:
+        option_value = config.getoption(option_name)
+        if option_value is None:
+            continue
+
+        selection_file_path = Path(option_value)
+        if not selection_file_path.exists():
+            raise UsageError(f"Given selection file '{selection_file_path}' doesn't exist.")
