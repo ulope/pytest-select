@@ -101,6 +101,8 @@ Example::
 Version History
 ---------------
 
+- ``v0.1.2`` - 2019-01-18:
+    - Add informational pytest header report output
 - ``v0.1.1`` - 2018-12-10:
     - Add ``--select-fail-on-missing`` option
     - Add basic mutation testing
